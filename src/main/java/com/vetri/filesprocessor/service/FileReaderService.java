@@ -18,20 +18,24 @@ public class FileReaderService {
         if (isDirectory(path)) {
             Stream<Path> files = Files.list(path);
             files.forEach(p -> {
-                try {
-                    boolean directory = isDirectory(p);
-                    Node child = new Node(p.getFileName().toString(), p.toAbsolutePath().toString(), directory, new ArrayList<>());
-                    node.getChild().add(child);
-                    if (directory) {
-                        readFile(p, child);
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                createNodeForFile(node, p);
             });
         } else {
             Node child = new Node(path.getFileName().toString(), path.toAbsolutePath().toString(), false, null);
             node.getChild().add(child);
+        }
+    }
+
+    private void createNodeForFile(Node node, Path p) {
+        try {
+            boolean directory = isDirectory(p);
+            Node child = new Node(p.getFileName().toString(), p.toAbsolutePath().toString(), directory, new ArrayList<>());
+            node.getChild().add(child);
+            if (directory) {
+                readFile(p, child);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }
